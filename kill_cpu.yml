@@ -4,3 +4,4 @@
   tasks:
     - name: Kill yes process
       shell: pkill yes
+      ignore_errors: yes
