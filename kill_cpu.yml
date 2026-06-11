@@ -1,0 +1,7 @@
+- name: Kill CPU process
+  hosts: all
+  become: yes
+  tasks:
+    - name: Kill yes process
+      shell: pkill yes
+``
