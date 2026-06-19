@@ -43,6 +43,12 @@
         regexp: '^Hostname=.*'
         replace: "Hostname={{ inventory_hostname }}"
 
+    - name: Set HostMetadata
+      replace:
+        path: /etc/zabbix/zabbix_agent2.conf
+        regexp: '^# HostMetadata='
+        replace: 'HostMetadata=Linux'
+
     - name: Enable Agent
       service:
         name: zabbix-agent2
