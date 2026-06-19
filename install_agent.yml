@@ -8,9 +8,7 @@
   tasks:
 
     - name: Fix broken dependencies
-      apt:
-        update_cache: yes
-        fix_broken: yes
+      command: apt --fix-broken install -y
 
     - name: Download Zabbix repository package
       get_url:
