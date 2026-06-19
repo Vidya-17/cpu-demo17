@@ -7,14 +7,20 @@
 
   tasks:
 
-    - name: Download repository package
+    - name: Fix broken dependencies
+      apt:
+        update_cache: yes
+        fix_broken: yes
+
+    - name: Download Zabbix repository package
       get_url:
-        url: http://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.0+ubuntu22.04_all.deb
+        url: https://repo.zabbix.com/zabbix/7.0/ubuntu/pool/main/z/zabbix-release/zabbix-release_latest_7.0+ubuntu22.04_all.deb
         dest: /tmp/zabbix-release.deb
 
-    - name: Install repository
+    - name: Install Zabbix repository (safe)
       apt:
         deb: /tmp/zabbix-release.deb
+        state: present
 
     - name: Update apt cache
       apt:
@@ -25,31 +31,23 @@
         name: zabbix-agent2
         state: present
 
-    - name: Configure Server
-      replace:
+    - name: Configure Zabbix agent settings
+      lineinfile:
         path: /etc/zabbix/zabbix_agent2.conf
-        regexp: '^Server=.*'
-        replace: "Server={{ zabbix_server }}"
-
-    - name: Configure Active Server
-      replace:
-        path: /etc/zabbix/zabbix_agent2.conf
-        regexp: '^ServerActive=.*'
-        replace: "ServerActive={{ zabbix_server }}"
-
-    - name: Configure Hostname
-      replace:
-        path: /etc/zabbix/zabbix_agent2.conf
-        regexp: '^Hostname=.*'
-        replace: "Hostname={{ inventory_hostname }}"
+        regexp: '^{{ item.key }}='
+        line: "{{ item.key }}={{ item.value }}"
+      loop:
+        - { key: "Server", value: "{{ zabbix_server }}" }
+        - { key: "ServerActive", value: "{{ zabbix_server }}" }
+        - { key: "Hostname", value: "{{ inventory_hostname }}" }
 
     - name: Set HostMetadata
-      replace:
+      lineinfile:
         path: /etc/zabbix/zabbix_agent2.conf
-        regexp: '^# HostMetadata='
-        replace: 'HostMetadata=Linux'
+        regexp: '^HostMetadata='
+        line: 'HostMetadata=Linux'
 
-    - name: Enable Agent
+    - name: Enable and restart Zabbix agent
       service:
         name: zabbix-agent2
         state: restarted
