@@ -2,9 +2,6 @@
   hosts: opa_target
   become: yes
 
-  collections:
-    - community.docker
-
   vars:
     opa_dir: /home/vm/OPA
 
@@ -38,22 +35,14 @@
     shell: docker load < {{ opa_dir }}/redis/redis_latest.tar
 
   - name: Run Redis container
-    community.docker.docker_container:
-      name: redis
-      image: redis:latest
-      state: started
-      restart_policy: unless-stopped
+    shell: docker run -d --name redis redis:latest || docker start redis
 
   # 3. OPAServer
   - name: Load OPAServer image
     shell: docker load < {{ opa_dir }}/yokogawaustc_opaserver-x64_1.02.10.00.tar
 
   - name: Run OPAServer container
-    community.docker.docker_container:
-      name: opaserver
-      image: yokogawaustc/opaserver-x64:1.02.10.00
-      state: started
-      restart_policy: unless-stopped
+    shell: docker run -d --name opaserver yokogawaustc/opaserver-x64:1.02.10.00 || docker start opaserver
 
   # 4. Broker
   - name: Extract Broker
@@ -66,11 +55,7 @@
     shell: docker load < {{ opa_dir }}/broker/broker-x64_1.02.00.00.tar
 
   - name: Run Broker container
-    community.docker.docker_container:
-      name: broker
-      image: yokogawaustc/broker-x64:1.02.00.00
-      state: started
-      restart_policy: unless-stopped
+    shell: docker run -d --name broker yokogawaustc/broker-x64:1.02.00.00 || docker start broker
 
   # 5. SoftdPAC
   - name: Make SoftdPAC script executable
