@@ -1,5 +1,5 @@
 - name: OPA Installation Playbook
-  hosts: opa_target
+  hosts: all
   become: yes
 
   vars:
