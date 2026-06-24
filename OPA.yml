@@ -1,0 +1,78 @@
+---
+- name: OPA Installation Playbook
+  hosts: local
+  become: yes
+
+  vars:
+    opa_dir: /home/vm/OPA
+
+  tasks:
+
+  # 1. Install Docker
+  - name: Install Docker
+    apt:
+      name: docker.io
+      state: present
+      update_cache: yes
+
+  - name: Start and enable Docker
+    systemd:
+      name: docker
+      enabled: yes
+      state: started
+
+  # 2. Load Redis Image
+  - name: Extract Redis image
+    command: gunzip -c {{ opa_dir }}/redis/redis_latest.tgz > {{ opa_dir }}/redis/redis_latest.tar
+    args:
+      creates: "{{ opa_dir }}/redis/redis_latest.tar"
+
+  - name: Load Redis image
+    command: docker load < {{ opa_dir }}/redis/redis_latest.tar
+
+  - name: Run Redis container
+    docker_container:
+      name: redis
+      image: redis:latest
+      state: started
+      restart_policy: unless-stopped
+
+  #  3. Load OPAServer Image
+  - name: Load OPAServer image
+    command: docker load < {{ opa_dir }}/yokogawaustc_opaserver-x64_1.02.10.00.tar
+
+  - name: Run OPAServer container
+    docker_container:
+      name: opaserver
+      image: yokogawaustc/opaserver-x64:1.02.10.00
+      state: started
+      restart_policy: unless-stopped
+
+  # 4. Load Broker Image
+  - name: Extract Broker
+    unarchive:
+      src: "{{ opa_dir }}/broker.tar.gz"
+      dest: "{{ opa_dir }}"
+      remote_src: yes
+      creates: "{{ opa_dir }}/broker"
+
+  - name: Load Broker image
+    command: docker load < {{ opa_dir }}/broker/broker-x64:1.02.00.00.tar
+
+  - name: Run Broker container
+    docker_container:
+      name: broker
+      image: yokogawaustc/broker-x64:1.02.00.00
+      state: started
+      restart_policy: unless-stopped
+
+  #  5. Install SoftdPAC
+  - name: Make SoftdPAC script executable
+    file:
+      path: "{{ opa_dir }}/SoftdPAC/installe_soft2.sh"
+      mode: '0755'
+
+  - name: Run SoftdPAC installer
+    command: "{{ opa_dir }}/SoftdPAC/installe_soft2.sh ens33"
+    args:
+      creates: "/var/lib/docker/containers"  # basic safeguard
