@@ -1,4 +1,4 @@
-- name: Auto Setup: Zabbix Agent + OPA Components
+- name: "Auto Setup: Zabbix Agent + OPA Components"
   hosts: all
   become: yes
 
