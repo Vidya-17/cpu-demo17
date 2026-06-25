@@ -87,7 +87,7 @@
 
 
   - name: Run Redis container
-    shell: docker run -d --name redis redis:latest || docker start redis
+    shell: docker run -d --restart=unless-stopped --name redis redis:latest || docker start redis
 
 
   # ==============================
@@ -98,7 +98,7 @@
     shell: docker load < {{ opa_dir }}/yokogawaustc_opaserver-x64_1.02.10.00.tar
 
   - name: Run OPAServer container
-    shell: docker run -d --name opaserver yokogawaustc/opaserver-x64:1.02.10.00 || docker start opaserver
+    shell: docker run -d --restart=unless-stopped --name opaserver yokogawaustc/opaserver-x64:1.02.10.00 || docker start opaserver
 
 
   # ==============================
@@ -112,7 +112,7 @@
     shell: docker load < "{{ opa_dir }}/broker/broker-x64:1.02.00.00.tar"
 
   - name: Run Broker container
-    shell: docker run -d --name broker yokogawaustc/broker-x64:1.02.00.00 || docker start broker
+    shell: docker run -d --restart=unless-stopped --name broker yokogawaustc/broker-x64:1.02.00.00 || docker start broker
 
 
   # ==============================
