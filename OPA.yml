@@ -44,7 +44,7 @@
     shell: tar -xzf {{ opa_dir }}/broker.tar.gz -C {{ opa_dir }}
 
   - name: Load Broker image
-    shell: docker load < {{ opa_dir }}/broker/broker-x64_1.02.00.00.tar
+    shell: docker load < "{{ opa_dir }}/broker/broker-x64:1.02.00.00.tar"
 
   - name: Run Broker container
     shell: docker run -d --name broker yokogawaustc/broker-x64:1.02.00.00 || docker start broker
