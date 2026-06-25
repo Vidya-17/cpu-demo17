@@ -25,26 +25,23 @@
       enabled: yes
       state: started
 
-  # 2. Redis
+  # 2. Redis 
   - name: Load Redis image directly
     shell: gunzip -c {{ opa_dir }}/redis/redis_latest.tgz | docker load
 
   - name: Run Redis container
     shell: docker run -d --name redis redis:latest || docker start redis
 
-  # 3. OPAServer
+  # 3. OPAServer 
   - name: Load OPAServer image
     shell: docker load < {{ opa_dir }}/yokogawaustc_opaserver-x64_1.02.10.00.tar
 
   - name: Run OPAServer container
     shell: docker run -d --name opaserver yokogawaustc/opaserver-x64:1.02.10.00 || docker start opaserver
 
-  # 4. Broker
-  - name: Extract Broker
-    unarchive:
-      src: "{{ opa_dir }}/broker.tar.gz"
-      dest: "{{ opa_dir }}"
-      remote_src: yes
+  # 4. Broker 
+  - name: Extract Broker package
+    shell: tar -xzf {{ opa_dir }}/broker.tar.gz -C {{ opa_dir }}
 
   - name: Load Broker image
     shell: docker load < {{ opa_dir }}/broker/broker-x64_1.02.00.00.tar
@@ -52,7 +49,7 @@
   - name: Run Broker container
     shell: docker run -d --name broker yokogawaustc/broker-x64:1.02.00.00 || docker start broker
 
-  # 5. SoftdPAC
+  # 5. SoftdPAC 
   - name: Make SoftdPAC script executable
     file:
       path: "{{ opa_dir }}/SoftdPAC/installe_soft2.sh"
