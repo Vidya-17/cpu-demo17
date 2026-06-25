@@ -26,13 +26,8 @@
       state: started
 
   # 2. Redis
-  - name: Extract Redis image
-    command: gunzip -c {{ opa_dir }}/redis/redis_latest.tgz > {{ opa_dir }}/redis/redis_latest.tar
-    args:
-      creates: "{{ opa_dir }}/redis/redis_latest.tar"
-
-  - name: Load Redis image
-    shell: docker load < {{ opa_dir }}/redis/redis_latest.tar
+  - name: Load Redis image directly
+    shell: gunzip -c {{ opa_dir }}/redis/redis_latest.tgz | docker load
 
   - name: Run Redis container
     shell: docker run -d --name redis redis:latest || docker start redis
