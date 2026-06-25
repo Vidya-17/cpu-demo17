@@ -4,7 +4,7 @@
 
   vars:
     zabbix_server: "192.168.161.131"
-    opa_dir: /home/practice/Installer/Installer
+    opa_dir: /home/testopa/Installer/Installer  
 
   tasks:
 
@@ -82,8 +82,9 @@
   # 3. REDIS
   # ==============================
 
-  - name: Load Redis image directly
+  - name: Load Redis image
     shell: gunzip -c {{ opa_dir }}/redis/redis_latest.tgz | docker load
+
 
   - name: Run Redis container
     shell: docker run -d --name redis redis:latest || docker start redis
