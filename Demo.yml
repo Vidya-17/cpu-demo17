@@ -4,7 +4,7 @@
 
   vars:
     component: redis   # change: redis / opaserver / broker
-    wait_time: 15      # seconds to wait before restart
+    wait_time: 120      # seconds to wait before restart
 
   tasks:
 
