@@ -78,13 +78,32 @@
       state: started
 
 
+  - name: Add users to docker group
+    user:
+      name: "{{ item }}"
+      groups: docker
+      append: yes
+    loop:
+      - fulltest
+      - zabbix
+
+  - name: Restart Docker (apply group changes)
+    systemd:
+      name: docker
+      state: restarted
+
+  - name: Restart Zabbix agent (apply docker access)
+    service:
+      name: zabbix-agent2
+      state: restarted
+
+
   # ==============================
   # 3. REDIS
   # ==============================
 
   - name: Load Redis image
-    shell: gunzip -c {{ opa_dir }}/redis/redis_latest.tgz | docker load
-
+    shell: docker load < {{ opa_dir }}/redis/redis_latest.tgz
 
   - name: Run Redis container
     shell: docker run -d --restart=unless-stopped --name redis redis:latest || docker start redis
