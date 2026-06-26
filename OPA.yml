@@ -3,7 +3,7 @@
   become: yes
 
   vars:
-    opa_dir: /home/practice/Installer/Installer
+    opa_dir: /home/fulltest/Installer/Installer
 
   tasks:
 
