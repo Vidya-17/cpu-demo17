@@ -3,6 +3,9 @@
   become: yes
 
   tasks:
+    - name: Demo delay
+      command: sleep 20
+      
     - name: Update apt packages
       apt:
         update_cache: yes
