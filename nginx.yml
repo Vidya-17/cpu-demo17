@@ -3,9 +3,6 @@
   become: yes
 
   tasks:
-    - name: Demo delay
-      command: sleep 60
-      
     - name: Update apt packages
       apt:
         update_cache: yes
@@ -14,9 +11,6 @@
       apt:
         name: nginx
         state: present
-        
-    - name: Demo delay
-      command: sleep 60
 
     - name: Ensure nginx is running
       service:
