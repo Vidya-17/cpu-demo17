@@ -4,19 +4,22 @@
 
   tasks:
 
-    - name: Demo delay
+    - name: Step 1 - Prepare system
       command: sleep 10
-      
+
     - name: Update apt packages
       apt:
         update_cache: yes
+
+    - name: Step 2 - After update delay
+      command: sleep 10
 
     - name: Install nginx
       apt:
         name: nginx
         state: present
-        
-    - name: Demo delay
+
+    - name: Step 3 - After install delay
       command: sleep 10
 
     - name: Ensure nginx is running
@@ -24,3 +27,6 @@
         name: nginx
         state: started
         enabled: yes
+
+    - name: Step 4 - Final delay
+      command: sleep 10
